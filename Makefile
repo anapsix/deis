@@ -19,6 +19,12 @@ dev-registry: check-docker
 discovery-url:
 	sed -e "s,# discovery:,discovery:," -e "s,discovery: https://discovery.etcd.io/.*,discovery: $$(curl -s -w '\n' https://discovery.etcd.io/new)," contrib/coreos/user-data.example > contrib/coreos/user-data
 
+vmware-cloudconfig: discovery-url
+	mkdir -p /tmp/vmware-cloudconfig-drive/openstack/latest
+	cp contrib/coreos/user-data /tmp/vmware-cloudconfig-drive/openstack/latest/user_data
+	mkisofs -R -V config-2 -o contrib/vmware/configdrive.iso /tmp/vmware-cloudconfig-drive
+	rm -r /tmp/vmware-cloudconfig-drive
+
 build: check-docker
 	@$(foreach C, $(COMPONENTS), $(MAKE) -C $(C) build &&) echo done
 	@$(foreach C, $(CLIENTS), $(MAKE) -C $(C) build &&) echo done

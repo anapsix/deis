@@ -85,3 +85,7 @@ contrib/ec2/cloudformation.json
 
 # GCE generated user-data
 contrib/gce/gce-user-data
+
+# Local VMWare config drive
+# https://coreos.com/docs/cluster-management/setup/cloudinit-config-drive/
+contrib/vmware/configdrive.iso
