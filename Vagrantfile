@@ -109,8 +109,18 @@ Vagrant.configure("2") do |config|
         vb.cpus = $vb_cpus
       end
 
-      ip = "172.17.8.#{i+99}"
-      config.vm.network :private_network, ip: ip
+      if ENV["NETWORK_MODE"] == "bridge"
+        require 'socket'
+        local_offset = ENV["NETWORK_OFFSET"] || 50
+        local_ip = Socket.ip_address_list[1].ip_unpack.first
+        bridge_interface = RUBY_PLATFORM =~ /darwin/ ? 'en1' : 'eth0'
+        bridge_interface = ENV['BRIDGE_INTERFACE'] unless ENV['BRIDGE_INTERFACE'].to_s.empty?
+        ip = "#{local_ip.split('.')[0,3].join('.')}.#{i+local_offset}"
+        config.vm.network :public_network, bridge: bridge_interface, ip: ip
+      else
+        ip = "172.17.8.#{i+99}"
+        config.vm.network :private_network, ip: ip
+      end
 
       # Uncomment below to enable NFS for sharing the host machine into the coreos-vagrant VM.
       #config.vm.synced_folder ".", "/home/core/share", id: "core", :nfs => true, :mount_options => ['nolock,vers=3,udp']
