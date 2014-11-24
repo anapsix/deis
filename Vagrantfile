@@ -55,7 +55,7 @@ Vagrant.configure("2") do |config|
 
   config.vm.provider :virtualbox do |vb, override|
     # Use paravirtualized network adapters
-    vb.customize ["modifyvm", :id, "--nictype1", "virtio"]
+    vb.customize ["modifyvm", :id, "--nictype1", "virtio"] if ENV['BRIDGE_INTERFACE'].to_s.empty?
     vb.customize ["modifyvm", :id, "--nictype2", "virtio"]
   end
 
